@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Go Easy Travels</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f1f5f9;
+        }
+
+        .dashboard-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .dashboard-sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 2rem 1.5rem;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-logo i {
+            color: #f39c12;
+        }
+
+        .dashboard-sidebar ul {
+            list-style: none;
+        }
+
+        .dashboard-sidebar li {
+            padding: 0.85rem 1rem;
+            margin: 0.25rem 0;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #cbd5e1;
+        }
+
+        .dashboard-sidebar li:hover, .dashboard-sidebar li.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .dashboard-main {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        .dashboard-header {
+            background: white;
+            border-radius: 20px;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .admin-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #e67e22, #f39c12);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-card i {
+            font-size: 2rem;
+            color: #1a8faa;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card h3 {
+            font-size: 0.9rem;
+            color: #475569;
+        }
+
+        .stat-card p {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .data-table {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .data-table h3 {
+            margin-bottom: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .status-pending {
+            color: #f39c12;
+            font-weight: 500;
+        }
+
+        .status-approved {
+            color: #10b981;
+            font-weight: 500;
+        }
+
+        .status-cancelled {
+            color: #ef4444;
+            font-weight: 500;
+        }
+
+        .action-btn {
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            border: none;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin: 0 0.25rem;
+            transition: all 0.2s;
+        }
+
+        .action-btn.approve {
+            background: #10b98120;
+            color: #10b981;
+        }
+
+        .action-btn.approve:hover {
+            background: #10b981;
+            color: white;
+        }
+
+        .action-btn.reject {
+            background: #ef444420;
+            color: #ef4444;
+        }
+
+        .action-btn.reject:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .action-btn.delete {
+            background: #ef444420;
+            color: #ef4444;
+        }
+
+        .action-btn.delete:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .action-btn.edit {
+            background: #3b82f620;
+            color: #3b82f6;
+        }
+
+        .action-btn.edit:hover {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 32px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h3 {
+            font-size: 1.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #475569;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #0f172a;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 0.95rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #1a8faa;
+        }
+
+        .btn-primary {
+            background: linear-gradient(95deg, #e67e22, #f39c12);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #334155;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-left: 0.5rem;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .role-super-admin {
+            background: #8b5cf620;
+            color: #8b5cf6;
+        }
+
+        .role-admin {
+            background: #3b82f620;
+            color: #3b82f6;
+        }
+
+        .role-moderator {
+            background: #10b98120;
+            color: #10b981;
+        }
+
+        .api-status {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                z-index: 1000;
+                transition: transform 0.3s;
+            }
+            .dashboard-main {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="dashboard-sidebar">
+            <div class="sidebar-logo">
+                <i class="fas fa-crown"></i>
+                <span>Admin Panel</span>
+            </div>
+            <ul>
+                <li data-tab="overview" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</li>
+                <li data-tab="bookings"><i class="fas fa-book"></i> Bookings</li>
+                <li data-tab="admins"><i class="fas fa-user-shield"></i> Admin Management</li>
+                <li data-tab="users"><i class="fas fa-users"></i> Users</li>
+                <li data-tab="destinations"><i class="fas fa-map-marked-alt"></i> Destinations</li>
+                <li id="adminLogout"><i class="fas fa-sign-out-alt"></i> Logout</li>
+            </ul>
+        </aside>
+        
+        <main class="dashboard-main">
+            <div class="dashboard-header">
+                <div>
+                    <h3>Admin Console</h3>
+                    <p style="font-size: 0.85rem; color: #475569;" id="adminEmailDisplay">Loading...</p>
+                </div>
+                <div class="admin-info">
+                    <div class="admin-avatar">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <span id="adminNameDisplay">Administrator</span>
+                </div>
+            </div>
+            
+            <div class="api-status" id="apiStatus">
+                <i class="fas fa-info-circle"></i> 
+                <span id="statusMessage">Admin Management Active - You can add/remove other admins</span>
+            </div>
+            
+            <!-- Dashboard Overview Tab -->
+            <div id="overviewTab" class="tab-content active">
+                <div class="stats-grid">
+                    <div class="stat-card"><i class="fas fa-plane"></i><h3>Total Bookings</h3><p id="totalBookings">0</p></div>
+                    <div class="stat-card"><i class="fas fa-dollar-sign"></i><h3>Revenue</h3><p id="totalRevenue">$0</p></div>
+                    <div class="stat-card"><i class="fas fa-user-friends"></i><h3>Active Users</h3><p id="activeUsers">0</p></div>
+                    <div class="stat-card"><i class="fas fa-user-shield"></i><h3>Total Admins</h3><p id="totalAdmins">0</p></div>
+                </div>
+                
+                <div class="data-table">
+                    <h3>Recent Bookings</h3>
+                    <div id="bookingsTableContainer">
+                        <table style="width: 100%;">
+                            <thead>
+                                <tr><th>Customer</th><th>Destination</th><th>Date</th><th>Status</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody id="bookingsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bookings Tab -->
+            <div id="bookingsTab" class="tab-content">
+                <h2>All Bookings</h2>
+                <div class="data-table" style="margin-top: 1rem;">
+                    <div id="allBookingsContainer">Loading bookings...</div>
+                </div>
+            </div>
+            
+            <!-- Admin Management Tab -->
+            <div id="adminsTab" class="tab-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2>Admin Management</h2>
+                    <button class="btn-primary" id="addAdminBtn" style="padding: 0.6rem 1.2rem;">
+                        <i class="fas fa-plus"></i> Add New Admin
+                    </button>
+                </div>
+                <div class="data-table">
+                    <div id="adminsContainer">Loading admins...</div>
+                </div>
+            </div>
+            
+            <!-- Users Tab -->
+            <div id="usersTab" class="tab-content">
+                <h2>User Management</h2>
+                <div class="data-table" style="margin-top: 1rem;">
+                    <div id="usersContainer">Loading users...</div>
+                </div>
+            </div>
+            
+            <!-- Destinations Tab -->
+            <div id="destinationsTab" class="tab-content">
+                <h2>Destinations</h2>
+                <div class="data-table" style="margin-top: 1rem;">
+                    <div id="destinationsContainer">Loading destinations...</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Admin Modal -->
+    <div id="adminModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Admin</h3>
+                <button class="modal-close" onclick="closeAdminModal()">&times;</button>
+            </div>
+            <form id="adminForm">
+                <input type="hidden" id="adminId" value="">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="adminName" required placeholder="John Smith">
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="adminEmail" required placeholder="admin@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="adminPassword" placeholder="Leave blank to keep current">
+                </div>
+                <div class="form-group">
+                    <label>Admin Role</label>
+                    <select id="adminRole">
+                        <option value="admin">Admin</option>
+                        <option value="moderator">Moderator</option>
+                        <option value="super_admin">Super Admin</option>
+                    </select>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="button" class="btn-secondary" onclick="closeAdminModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Admin</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // ADMIN MANAGEMENT SYSTEM
+        // ============================================
+        
+        // Check authentication
+        const userData = localStorage.getItem('goeasy_user');
+        if (!userData) {
+            window.location.href = '../login.html';
+        }
+        
+        let currentUser = null;
+        try {
+            currentUser = JSON.parse(userData);
+            if (currentUser.role !== 'admin' && currentUser.email !== 'admin@gmail.com') {
+                alert('Admin access only');
+                window.location.href = '../login.html';
+            }
+        } catch(e) {
+            const email = localStorage.getItem('goeasy_user_email');
+            if (email !== 'admin@gmail.com') {
+                window.location.href = '../login.html';
+            }
+            currentUser = { email: email, name: 'Administrator', role: 'super_admin' };
+        }
+        
+        // Display admin info
+        document.getElementById('adminEmailDisplay').innerText = currentUser.email || 'admin@gmail.com';
+        document.getElementById('adminNameDisplay').innerText = currentUser.name || 'Administrator';
+        
+        // ============================================
+        // ADMIN DATA STORAGE
+        // ============================================
+        
+        // Initialize admins in localStorage
+        let admins = JSON.parse(localStorage.getItem('goeasy_admins') || '[]');
+        
+        if (admins.length === 0) {
+            admins = [
+                { id: 1, name: "Super Admin", email: "admin@gmail.com", role: "super_admin", createdAt: "2025-01-01", createdBy: "system" },
+                { id: 2, name: "John Manager", email: "john@goeasy.com", role: "admin", createdAt: "2025-01-15", createdBy: "admin@gmail.com" },
+                { id: 3, name: "Sarah Moderator", email: "sarah@goeasy.com", role: "moderator", createdAt: "2025-02-01", createdBy: "admin@gmail.com" }
+            ];
+            localStorage.setItem('goeasy_admins', JSON.stringify(admins));
+        }
+        
+        // Demo data for other sections
+        let bookings = [
+            { id: 1, name: "Sarah Johnson", email: "sarah@example.com", destination: "Bali, Indonesia", travelDate: "2025-06-10", peopleCount: 2, status: "pending", amount: 1798 },
+            { id: 2, name: "Michael Lee", email: "michael@example.com", destination: "Paris, France", travelDate: "2025-07-01", peopleCount: 2, status: "approved", amount: 2598 },
+            { id: 3, name: "Emma Wilson", email: "emma@example.com", destination: "Maldives", travelDate: "2025-08-15", peopleCount: 4, status: "pending", amount: 7996 },
+            { id: 4, name: "David Chen", email: "david@example.com", destination: "Tokyo, Japan", travelDate: "2025-09-20", peopleCount: 2, status: "approved", amount: 2998 },
+            { id: 5, name: "Lisa Wong", email: "lisa@example.com", destination: "Santorini, Greece", travelDate: "2025-10-05", peopleCount: 2, status: "cancelled", amount: 3398 }
+        ];
+        
+        let users = [
+            { id: 1, name: "Sarah Johnson", email: "sarah@example.com", joinDate: "2025-01-15", bookings: 2 },
+            { id: 2, name: "Michael Lee", email: "michael@example.com", joinDate: "2025-02-20", bookings: 1 },
+            { id: 3, name: "Emma Wilson", email: "emma@example.com", joinDate: "2025-03-10", bookings: 1 },
+            { id: 4, name: "David Chen", email: "david@example.com", joinDate: "2025-01-05", bookings: 3 },
+            { id: 5, name: "Lisa Wong", email: "lisa@example.com", joinDate: "2025-02-15", bookings: 1 }
+        ];
+        
+        let destinationsList = [
+            { id: 1, name: "Bali, Indonesia", price: 899, duration: "7 days", popularity: 245 },
+            { id: 2, name: "Paris, France", price: 1299, duration: "5 days", popularity: 312 },
+            { id: 3, name: "Maldives", price: 1999, duration: "6 days", popularity: 189 },
+            { id: 4, name: "Tokyo, Japan", price: 1499, duration: "6 days", popularity: 267 }
+        ];
+        
+        // ============================================
+        // ADMIN MANAGEMENT FUNCTIONS
+        // ============================================
+        
+        function renderAdmins() {
+            const container = document.getElementById('adminsContainer');
+            const currentUserEmail = currentUser.email || localStorage.getItem('goeasy_user_email');
+            const isSuperAdmin = currentUser.role === 'super_admin' || currentUser.email === 'admin@gmail.com';
+            
+            if (container) {
+                container.innerHTML = `
+                    <table style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Created At</th>
+                                <th>Created By</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${admins.map(admin => `
+                                <tr>
+                                    <td>${admin.name} ${admin.email === currentUserEmail ? '<span style="font-size: 0.7rem; color: #10b981;">(You)</span>' : ''}</td>
+                                    <td>${admin.email}</td>
+                                    <td><span class="role-badge role-${admin.role.replace('_', '-')}">${admin.role.replace('_', ' ').toUpperCase()}</span></td>
+                                    <td>${admin.createdAt}</td>
+                                    <td>${admin.createdBy}</td>
+                                    <td>
+                                        ${admin.email !== currentUserEmail ? `
+                                            <button class="action-btn edit" onclick="editAdmin(${admin.id})"><i class="fas fa-edit"></i> Edit</button>
+                                            <button class="action-btn delete" onclick="deleteAdmin(${admin.id})"><i class="fas fa-trash"></i> Delete</button>
+                                        ` : '<span style="color: #94a3b8;">Current User</span>'}
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    ${!isSuperAdmin ? '<p style="margin-top: 1rem; padding: 0.75rem; background: #fef3c7; border-radius: 8px;"><i class="fas fa-lock"></i> Only Super Admins can add or remove other admins.</p>' : ''}
+                `;
+            }
+        }
+        
+        function openAddAdminModal() {
+            const isSuperAdmin = currentUser.role === 'super_admin' || currentUser.email === 'admin@gmail.com';
+            if (!isSuperAdmin) {
+                alert('Only Super Admins can add new admins');
+                return;
+            }
+            
+            document.getElementById('modalTitle').innerText = 'Add New Admin';
+            document.getElementById('adminId').value = '';
+            document.getElementById('adminName').value = '';
+            document.getElementById('adminEmail').value = '';
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('adminRole').value = 'admin';
+            document.getElementById('adminModal').classList.add('active');
+        }
+        
+        window.editAdmin = function(id) {
+            const isSuperAdmin = currentUser.role === 'super_admin' || currentUser.email === 'admin@gmail.com';
+            if (!isSuperAdmin) {
+                alert('Only Super Admins can edit admins');
+                return;
+            }
+            
+            const admin = admins.find(a => a.id === id);
+            if (admin) {
+                document.getElementById('modalTitle').innerText = 'Edit Admin';
+                document.getElementById('adminId').value = admin.id;
+                document.getElementById('adminName').value = admin.name;
+                document.getElementById('adminEmail').value = admin.email;
+                document.getElementById('adminPassword').value = '';
+                document.getElementById('adminRole').value = admin.role;
+                document.getElementById('adminModal').classList.add('active');
+            }
+        };
+        
+        window.deleteAdmin = function(id) {
+            const isSuperAdmin = currentUser.role === 'super_admin' || currentUser.email === 'admin@gmail.com';
+            if (!isSuperAdmin) {
+                alert('Only Super Admins can delete admins');
+                return;
+            }
+            
+            const admin = admins.find(a => a.id === id);
+            if (admin && confirm(`Are you sure you want to delete admin "${admin.name}"?`)) {
+                admins = admins.filter(a => a.id !== id);
+                localStorage.setItem('goeasy_admins', JSON.stringify(admins));
+                renderAdmins();
+                updateStats();
+                alert('Admin deleted successfully');
+            }
+        };
+        
+        window.closeAdminModal = function() {
+            document.getElementById('adminModal').classList.remove('active');
+        };
+        
+        // Handle admin form submission
+        document.getElementById('adminForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('adminId').value;
+            const name = document.getElementById('adminName').value.trim();
+            const email = document.getElementById('adminEmail').value.trim();
+            const password = document.getElementById('adminPassword').value;
+            const role = document.getElementById('adminRole').value;
+            const currentUserEmail = currentUser.email || localStorage.getItem('goeasy_user_email');
+            
+            if (!name || !email) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            if (id) {
+                // Edit existing admin
+                const index = admins.findIndex(a => a.id == id);
+                if (index !== -1) {
+                    admins[index].name = name;
+                    admins[index].email = email;
+                    admins[index].role = role;
+                    localStorage.setItem('goeasy_admins', JSON.stringify(admins));
+                    alert('Admin updated successfully');
+                }
+            } else {
+                // Check if email already exists
+                if (admins.some(a => a.email === email)) {
+                    alert('An admin with this email already exists');
+                    return;
+                }
+                
+                // Add new admin
+                const newAdmin = {
+                    id: Date.now(),
+                    name: name,
+                    email: email,
+                    role: role,
+                    createdAt: new Date().toISOString().split('T')[0],
+                    createdBy: currentUserEmail
+                };
+                admins.push(newAdmin);
+                localStorage.setItem('goeasy_admins', JSON.stringify(admins));
+                alert(`Admin ${name} added successfully! ${password ? 'They can login with the provided password.' : 'They will need to reset their password on first login.'}`);
+            }
+            
+            closeAdminModal();
+            renderAdmins();
+            updateStats();
+        });
+        
+        // ============================================
+        // OTHER DASHBOARD FUNCTIONS
+        // ============================================
+        
+        function updateStats() {
+            const totalBookings = bookings.length;
+            const revenue = bookings.filter(b => b.status === 'approved').reduce((sum, b) => sum + b.amount, 0);
+            const activeUsers = users.length;
+            const totalAdmins = admins.length;
+            
+            document.getElementById('totalBookings').innerText = totalBookings;
+            document.getElementById('totalRevenue').innerText = `$${revenue.toLocaleString()}`;
+            document.getElementById('activeUsers').innerText = activeUsers;
+            document.getElementById('totalAdmins').innerText = totalAdmins;
+        }
+        
+        function renderBookings() {
+            const tbody = document.getElementById('bookingsTableBody');
+            tbody.innerHTML = bookings.slice(0, 5).map(booking => `
+                <tr>
+                    <td>${booking.name}</td>
+                    <td>${booking.destination}</td>
+                    <td>${booking.travelDate}</td>
+                    <td class="status-${booking.status}">${booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}</td>
+                    <td>
+                        <button class="action-btn approve" data-id="${booking.id}">Approve</button>
+                        <button class="action-btn reject" data-id="${booking.id}">Reject</button>
+                    </td>
+                </tr>
+            `).join('');
+            
+            document.querySelectorAll('.approve').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = parseInt(btn.dataset.id);
+                    const index = bookings.findIndex(b => b.id === id);
+                    if (index !== -1) {
+                        bookings[index].status = 'approved';
+                        updateStats();
+                        renderBookings();
+                        renderAllBookings();
+                        alert('Booking approved!');
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.reject').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = parseInt(btn.dataset.id);
+                    const index = bookings.findIndex(b => b.id === id);
+                    if (index !== -1) {
+                        bookings[index].status = 'cancelled';
+                        updateStats();
+                        renderBookings();
+                        renderAllBookings();
+                        alert('Booking rejected');
+                    }
+                });
+            });
+        }
+        
+        function renderAllBookings() {
+            const container = document.getElementById('allBookingsContainer');
+            if (container) {
+                container.innerHTML = `
+                    <table style="width: 100%;">
+                        <thead><tr><th>ID</th><th>Customer</th><th>Destination</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead>
+                        <tbody>
+                            ${bookings.map(b => `
+                                <tr>
+                                    <td>${b.id}</td>
+                                    <td>${b.name}</td>
+                                    <td>${b.destination}</td>
+                                    <td>${b.travelDate}</td>
+                                    <td>$${b.amount}</td>
+                                    <td class="status-${b.status}">${b.status}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            }
+        }
+        
+        function renderUsers() {
+            const container = document.getElementById('usersContainer');
+            if (container) {
+                container.innerHTML = `
+                    <table style="width: 100%;">
+                        <thead><tr><th>Name</th><th>Email</th><th>Join Date</th><th>Bookings</th></tr></thead>
+                        <tbody>
+                            ${users.map(u => `
+                                <tr>
+                                    <td>${u.name}</td>
+                                    <td>${u.email}</td>
+                                    <td>${u.joinDate}</td>
+                                    <td>${u.bookings}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            }
+        }
+        
+        function renderDestinations() {
+            const container = document.getElementById('destinationsContainer');
+            if (container) {
+                container.innerHTML = `
+                    <table style="width: 100%;">
+                        <thead><tr><th>Destination</th><th>Price</th><th>Duration</th><th>Popularity</th></tr></thead>
+                        <tbody>
+                            ${destinationsList.map(d => `
+                                <tr>
+                                    <td>${d.name}</td>
+                                    <td>$${d.price}</td>
+                                    <td>${d.duration}</td>
+                                    <td>${d.popularity} bookings</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            }
+        }
+        
+        // Tab switching
+        document.querySelectorAll('[data-tab]').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+                document.getElementById(tab.dataset.tab + 'Tab').classList.add('active');
+                document.querySelectorAll('.dashboard-sidebar li').forEach(li => li.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Refresh data when switching tabs
+                if (tab.dataset.tab === 'admins') {
+                    renderAdmins();
+                }
+            });
+        });
+        
+        // Add Admin button
+        document.getElementById('addAdminBtn').addEventListener('click', openAddAdminModal);
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('adminModal');
+            if (event.target === modal) {
+                closeAdminModal();
+            }
+        };
+        
+        // Logout
+        document.getElementById('adminLogout').addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = '../login.html';
+        });
+        
+        // Initialize dashboard
+        updateStats();
+        renderBookings();
+        renderAllBookings();
+        renderAdmins();
+        renderUsers();
+        renderDestinations();
+    </script>
+</body>
+</html>
