@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Destinations | Go Easy Travels</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+        }
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.35rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0b3b4f, #1a8faa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .logo i {
+            color: #1a8faa;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            font-weight: 500;
+            color: #334155;
+        }
+
+        .user-greeting {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: #f1f5f9;
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+        }
+
+        .dashboard-link {
+            background: linear-gradient(95deg, #e67e22, #f39c12);
+            color: white !important;
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+        }
+
+        .logout-link {
+            color: #ef4444 !important;
+        }
+
+        .hamburger {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #0b3b4f, #1a6b7e);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+        }
+
+        .section {
+            padding: 5rem 2rem;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .destinations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .destination-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px -8px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .destination-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .destination-card img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        .card-content h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-content p {
+            color: #e67e22;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .btn-small {
+            display: inline-block;
+            padding: 0.6rem 1.2rem;
+            background: #1a8faa;
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+        }
+
+        .footer {
+            background: #0f172a;
+            color: #94a3b8;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 1.5rem;
+            }
+            .nav-links.active {
+                display: flex;
+            }
+            .hamburger {
+                display: block;
+            }
+            .destinations-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='index.html'">
+                <i class="fas fa-plane-departure"></i>
+                <span>Go Easy Travels & Tours</span>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="destinations.html">Destinations</a></li>
+                <li id="authNavItem"><a href="login.html">Login</a></li>
+            </ul>
+            <div class="hamburger" id="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="page-header">
+            <div class="container">
+                <h1>Discover Amazing Destinations</h1>
+                <p>Handpicked travel experiences across the globe</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container">
+                <div class="destinations-grid" id="allDestinationsGrid"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 Go Easy Travels & Tours — 0810 318 2424</p>
+    </footer>
+
+    <script>
+        // Check login status
+        const userEmail = localStorage.getItem('goeasy_user_email');
+        const userData = localStorage.getItem('goeasy_user');
+        let currentUser = null;
+        
+        try {
+            currentUser = userData ? JSON.parse(userData) : null;
+        } catch(e) {
+            currentUser = userEmail ? { email: userEmail, name: userEmail.split('@')[0] } : null;
+        }
+        
+        const authNavItem = document.getElementById('authNavItem');
+        
+        if (currentUser && userEmail) {
+            const userRole = localStorage.getItem('goeasy_user_role');
+            const isAdmin = (userRole === 'admin' || userRole === 'super_admin' || userEmail === 'admin@gmail.com');
+            const dashboardUrl = isAdmin ? 'dashboard/admin-dashboard.html' : 'dashboard/user-dashboard.html';
+            const userName = currentUser.name || userEmail.split('@')[0];
+            
+            authNavItem.innerHTML = `
+                <div class="user-greeting">
+                    <i class="fas fa-user-circle"></i>
+                    <span>${userName}</span>
+                    <a href="${dashboardUrl}" class="dashboard-link">Dashboard</a>
+                    <a href="#" id="logoutNavBtn" class="logout-link">Logout</a>
+                </div>
+            `;
+            
+            const logoutBtn = document.getElementById('logoutNavBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    localStorage.clear();
+                    window.location.href = 'index.html';
+                });
+            }
+        } else {
+            authNavItem.innerHTML = '<a href="login.html">Login</a>';
+        }
+        
+        // Mobile menu
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+        if (hamburger && navLinks) {
+            hamburger.addEventListener('click', () => navLinks.classList.toggle('active'));
+        }
+        
+        // Destinations
+        const allDestinationsGrid = document.getElementById('allDestinationsGrid');
+        if (allDestinationsGrid) {
+            const destinations = [
+                { name: "Bali, Indonesia", price: "$899", img: "https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg?auto=compress&cs=tinysrgb&w=600", link: "destination-details.html?id=bali" },
+                { name: "Paris, France", price: "$1299", img: "https://images.pexels.com/photos/699466/pexels-photo-699466.jpeg?auto=compress&cs=tinysrgb&w=600", link: "destination-details.html?id=paris" },
+                { name: "Maldives", price: "$1999", img: "https://images.pexels.com/photos/1450353/pexels-photo-1450353.jpeg?auto=compress&cs=tinysrgb&w=600", link: "destination-details.html?id=maldives" },
+                { name: "Tokyo, Japan", price: "$1499", img: "https://images.pexels.com/photos/2614819/pexels-photo-2614819.jpeg?auto=compress&cs=tinysrgb&w=600", link: "destination-details.html?id=tokyo" },
+                { name: "Santorini, Greece", price: "$1699", img: "https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg?auto=compress&cs=tinysrgb&w=600", link: "destination-details.html?id=santorini" },
+                { name: "New York, USA", price: "$1099", img: "https://images.pexels.com/photos/699466/pexels-photo-699466.jpeg?auto=compress&cs=tinysrgb&w=600", link: "destination-details.html?id=newyork" }
+            ];
+            
+            allDestinationsGrid.innerHTML = destinations.map(d => `
+                <div class="destination-card" onclick="window.location.href='${d.link}'">
+                    <img src="${d.img}" alt="${d.name}">
+                    <div class="card-content">
+                        <h3>${d.name}</h3>
+                        <p>from ${d.price}</p>
+                        <a href="${d.link}" class="btn-small">View Details</a>
+                    </div>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
