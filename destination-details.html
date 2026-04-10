@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Destination Details | Go Easy Travels</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+        }
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.35rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0b3b4f, #1a8faa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #334155;
+        }
+
+        .detail-hero {
+            padding: 2rem;
+        }
+
+        .image-slider-container {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            border-radius: 32px;
+            overflow: hidden;
+        }
+
+        .slider-main {
+            position: relative;
+            height: 500px;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .slider-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .slider-controls button {
+            background: rgba(0,0,0,0.5);
+            border: none;
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .travel-details {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 24px;
+            margin: 1.5rem 0;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.9rem 2rem;
+            background: linear-gradient(95deg, #e67e22, #f39c12);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+            .slider-main {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><i class="fas fa-plane-departure"></i> Go Easy Travels</div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="destinations.html">Destinations</a></li>
+            <li><a href="booking.html">Book Now</a></li>
+            <li><a href="login.html">Login</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section class="detail-hero">
+            <div class="image-slider-container">
+                <div class="slider-main" id="sliderMain">
+                    <div class="slide active"><img src="https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Destination"></div>
+                    <div class="slide"><img src="https://images.pexels.com/photos/2387873/pexels-photo-2387873.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Destination 2"></div>
+                    <div class="slide"><img src="https://images.pexels.com/photos/3225531/pexels-photo-3225531.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Destination 3"></div>
+                </div>
+                <div class="slider-controls">
+                    <button id="prevSlide"><i class="fas fa-chevron-left"></i></button>
+                    <button id="nextSlide"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <div class="container">
+            <div class="detail-grid">
+                <div>
+                    <h1 id="destName">Bali, Indonesia</h1>
+                    <p id="destDesc">Experience paradise on earth with stunning beaches, lush rice terraces, and vibrant culture.</p>
+                    <div class="travel-details">
+                        <p><strong>Duration:</strong> <span id="duration">7 Days / 6 Nights</span></p>
+                        <p><strong>Activities:</strong> <span id="activities">Surfing, Temple tours, Yoga</span></p>
+                        <p><strong>Price:</strong> <span id="priceDisplay">$899</span> per person</p>
+                    </div>
+                    <a href="booking.html" id="bookNowBtn" class="btn">Book Now</a>
+                </div>
+                <div>
+                    <h3>Why Choose Go Easy?</h3>
+                    <ul style="margin-top: 1rem; list-style: none;">
+                        <li><i class="fas fa-check-circle" style="color: #10b981;"></i> Private guided tours</li>
+                        <li><i class="fas fa-check-circle" style="color: #10b981;"></i> Flexible cancellation</li>
+                        <li><i class="fas fa-check-circle" style="color: #10b981;"></i> Best price guarantee</li>
+                        <li><i class="fas fa-check-circle" style="color: #10b981;"></i> 24/7 support</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Image slider
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prevSlide');
+        const nextBtn = document.getElementById('nextSlide');
+        
+        function showSlide(index) {
+            slides.forEach((s, i) => s.classList.toggle('active', i === index));
+            currentSlide = index;
+        }
+        
+        if (prevBtn && nextBtn) {
+            prevBtn.addEventListener('click', () => showSlide((currentSlide - 1 + slides.length) % slides.length));
+            nextBtn.addEventListener('click', () => showSlide((currentSlide + 1) % slides.length));
+        }
+        
+        // Load destination from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const destId = urlParams.get('id');
+        
+        const destinations = {
+            bali: { name: "Bali, Indonesia", desc: "Experience paradise on earth with stunning beaches, lush rice terraces, and vibrant culture. Perfect for adventure and relaxation.", duration: "7 Days / 6 Nights", activities: "Surfing, Temple tours, Yoga, Cooking class", price: "$899" },
+            paris: { name: "Paris, France", desc: "Romance, art, and iconic Eiffel Tower. Gourmet experiences and world-class museums.", duration: "5 Days / 4 Nights", activities: "Louvre, Seine cruise, Montmartre, Wine tasting", price: "$1299" },
+            maldives: { name: "Maldives", desc: "Overwater bungalows, crystal clear waters, and ultimate relaxation.", duration: "6 Days / 5 Nights", activities: "Snorkeling, sunset cruise, spa, diving", price: "$1999" },
+            tokyo: { name: "Tokyo, Japan", desc: "Futuristic city with ancient temples, amazing food, and unique culture.", duration: "6 Days / 5 Nights", activities: "Sushi making, temples, shopping, Disneyland", price: "$1499" },
+            santorini: { name: "Santorini, Greece", desc: "Whitewashed buildings, blue domes, and breathtaking sunsets.", duration: "5 Days / 4 Nights", activities: "Sunset cruise, wine tasting, volcano tour", price: "$1699" },
+            newyork: { name: "New York, USA", desc: "The city that never sleeps with iconic landmarks and Broadway shows.", duration: "5 Days / 4 Nights", activities: "Times Square, Central Park, Museums", price: "$1099" }
+        };
+        
+        if (destId && destinations[destId]) {
+            const d = destinations[destId];
+            document.getElementById('destName').innerText = d.name;
+            document.getElementById('destDesc').innerText = d.desc;
+            document.getElementById('duration').innerText = d.duration;
+            document.getElementById('activities').innerText = d.activities;
+            document.getElementById('priceDisplay').innerText = d.price;
+            document.getElementById('bookNowBtn').href = `booking.html?destination=${encodeURIComponent(d.name)}`;
+        }
+    </script>
+</body>
+</html>
