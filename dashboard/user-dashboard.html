@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard | Go Easy Travels</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        .dashboard-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .dashboard-sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 2rem 1.5rem;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+        }
+
+        .sidebar-logo i {
+            color: #f39c12;
+        }
+
+        .dashboard-sidebar ul {
+            list-style: none;
+        }
+
+        .dashboard-sidebar li {
+            padding: 0.85rem 1rem;
+            margin: 0.25rem 0;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #cbd5e1;
+        }
+
+        .dashboard-sidebar li:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .dashboard-main {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        .dashboard-header {
+            background: white;
+            border-radius: 20px;
+            padding: 1.25rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .dashboard-header h2 {
+            font-size: 1.5rem;
+            color: #0f172a;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-card i {
+            font-size: 2rem;
+            color: #1a8faa;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card h3 {
+            font-size: 0.9rem;
+            color: #475569;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .booking-history {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .booking-history h3 {
+            margin-bottom: 1rem;
+        }
+
+        .bookings-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .booking-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 16px;
+            transition: all 0.2s;
+        }
+
+        .booking-item:hover {
+            background: #f1f5f9;
+        }
+
+        .booking-item img {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        .booking-item h4 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .booking-item p {
+            font-size: 0.85rem;
+            color: #475569;
+        }
+
+        .status {
+            margin-left: auto;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status.approved, .status.Confirmed {
+            background: #10b98120;
+            color: #10b981;
+        }
+
+        .status.pending {
+            background: #f39c1220;
+            color: #f39c12;
+        }
+
+        .status.cancelled {
+            background: #ef444420;
+            color: #ef4444;
+        }
+
+        .packages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .package-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .package-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .package-card h4 {
+            margin-bottom: 0.5rem;
+        }
+
+        .package-card button {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: #1a8faa;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .package-card button:hover {
+            background: #0f6b7e;
+        }
+
+        .btn-book-now {
+            display: inline-block;
+            background: linear-gradient(95deg, #e67e22, #f39c12);
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 1rem;
+            transition: transform 0.2s;
+        }
+
+        .btn-book-now:hover {
+            transform: translateY(-2px);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #475569;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                z-index: 1000;
+                transition: transform 0.3s;
+            }
+            .dashboard-sidebar.open {
+                transform: translateX(0);
+            }
+            .dashboard-main {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="dashboard-sidebar" id="sidebar">
+            <div class="sidebar-logo" onclick="window.location.href='../index.html'">
+                <i class="fas fa-plane-departure"></i>
+                <span>Go Easy</span>
+            </div>
+            <ul>
+                <li id="dashboardTab"><i class="fas fa-tachometer-alt"></i> Dashboard</li>
+                <li id="myBookingsTab"><i class="fas fa-suitcase-rolling"></i> My Bookings</li>
+                <li id="bookNewTab"><i class="fas fa-plus-circle"></i> Book New Trip</li>
+                <li id="profileTab"><i class="fas fa-user-circle"></i> Profile</li>
+                <li id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</li>
+            </ul>
+        </aside>
+        
+        <main class="dashboard-main">
+            <div class="dashboard-header">
+                <h2>Welcome back, <span id="userNameDisplay">Traveler</span>!</h2>
+                <i class="fas fa-bell" style="font-size: 1.2rem; cursor: pointer;"></i>
+            </div>
+            
+            <!-- Dashboard View -->
+            <div id="dashboardView">
+                <div class="stats-grid">
+                    <div class="stat-card" onclick="showMyBookings()">
+                        <i class="fas fa-calendar-check"></i>
+                        <h3>My Bookings</h3>
+                        <p id="upcomingCount">0</p>
+                    </div>
+                    <div class="stat-card" onclick="showBookNew()">
+                        <i class="fas fa-plus-circle"></i>
+                        <h3>Book New Trip</h3>
+                        <p id="newTripPrompt">Start Journey →</p>
+                    </div>
+                </div>
+                
+                <div class="booking-history">
+                    <h3>Your Recent Bookings</h3>
+                    <div class="bookings-list" id="userBookingsList"></div>
+                </div>
+                
+                <div>
+                    <h3>Recommended Packages</h3>
+                    <div class="packages-grid" id="packagesGrid"></div>
+                </div>
+            </div>
+            
+            <!-- My Bookings View (hidden by default) -->
+            <div id="myBookingsView" style="display: none;">
+                <h2 style="margin-bottom: 1.5rem;">My Bookings</h2>
+                <div class="booking-history">
+                    <div class="bookings-list" id="allBookingsList"></div>
+                </div>
+            </div>
+            
+            <!-- Book New Trip View (hidden by default) -->
+            <div id="bookNewView" style="display: none;">
+                <h2 style="margin-bottom: 1.5rem;">Book a New Trip</h2>
+                <div class="booking-card" style="background: white; border-radius: 24px; padding: 2rem;">
+                    <form id="dashboardBookingForm">
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label><i class="fas fa-map-marker-alt"></i> Select Destination</label>
+                            <select id="bookingDestination" style="width: 100%; padding: 0.9rem; border-radius: 16px; border: 1px solid #e2e8f0;">
+                                <option value="Bali, Indonesia">Bali, Indonesia ($899)</option>
+                                <option value="Paris, France">Paris, France ($1299)</option>
+                                <option value="Maldives">Maldives ($1999)</option>
+                                <option value="Tokyo, Japan">Tokyo, Japan ($1499)</option>
+                                <option value="Santorini, Greece">Santorini, Greece ($1699)</option>
+                            </select>
+                        </div>
+                        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                            <div class="form-group">
+                                <label><i class="fas fa-calendar-alt"></i> Travel Date</label>
+                                <input type="date" id="bookingTravelDate" style="width: 100%; padding: 0.9rem; border-radius: 16px; border: 1px solid #e2e8f0;" required>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-users"></i> Number of People</label>
+                                <input type="number" id="bookingPeopleCount" min="1" value="2" style="width: 100%; padding: 0.9rem; border-radius: 16px; border: 1px solid #e2e8f0;" required>
+                            </div>
+                        </div>
+                        <button type="submit" style="background: linear-gradient(95deg, #e67e22, #f39c12); color: white; padding: 0.9rem 2rem; border: none; border-radius: 50px; font-weight: 600; width: 100%; cursor: pointer;">
+                            Confirm Booking
+                        </button>
+                    </form>
+                    <div id="dashboardBookingMessage" style="margin-top: 1rem;"></div>
+                </div>
+            </div>
+            
+            <!-- Profile View (hidden by default) -->
+            <div id="profileView" style="display: none;">
+                <h2 style="margin-bottom: 1.5rem;">My Profile</h2>
+                <div class="booking-card" style="background: white; border-radius: 24px; padding: 2rem;">
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #e67e22, #f39c12); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                            <i class="fas fa-user" style="font-size: 2rem; color: white;"></i>
+                        </div>
+                        <h3 id="profileName"></h3>
+                        <p id="profileEmail" style="color: #475569;"></p>
+                    </div>
+                    <div class="info-group" style="background: #f8fafc; padding: 1rem; border-radius: 16px; margin-bottom: 1rem;">
+                        <p><strong>Member Since:</strong> <span id="memberSince"></span></p>
+                        <p><strong>Total Trips Booked:</strong> <span id="totalTrips"></span></p>
+                        <p><strong>Favorite Destination:</strong> <span id="favoriteDestination">-</span></p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Check if user is logged in
+        let currentUser = null;
+        const userEmail = localStorage.getItem('goeasy_user_email');
+        const userData = localStorage.getItem('goeasy_user');
+        
+        if (!userEmail) {
+            window.location.href = '../login.html';
+        }
+        
+        try {
+            currentUser = JSON.parse(userData);
+        } catch(e) {
+            currentUser = { email: userEmail, name: userEmail.split('@')[0], role: 'user' };
+        }
+        
+        // Display user name
+        const userName = currentUser.name || userEmail.split('@')[0];
+        document.getElementById('userNameDisplay').innerText = userName;
+        document.getElementById('profileName').innerText = userName;
+        document.getElementById('profileEmail').innerText = userEmail;
+        document.getElementById('memberSince').innerText = localStorage.getItem('goeasy_member_since') || 'March 2025';
+        
+        // Load bookings for this specific user
+        function loadUserBookings() {
+            const allBookings = JSON.parse(localStorage.getItem('goeasy_bookings') || '[]');
+            const userBookings = allBookings.filter(b => b.email === userEmail);
+            return userBookings;
+        }
+        
+        function saveUserBookings(bookings) {
+            const allBookings = JSON.parse(localStorage.getItem('goeasy_bookings') || '[]');
+            const otherBookings = allBookings.filter(b => b.email !== userEmail);
+            const newAllBookings = [...otherBookings, ...bookings];
+            localStorage.setItem('goeasy_bookings', JSON.stringify(newAllBookings));
+        }
+        
+        function updateDashboard() {
+            const userBookings = loadUserBookings();
+            
+            // Count upcoming trips (future dates)
+            const today = new Date().toISOString().split('T')[0];
+            const upcoming = userBookings.filter(b => b.travelDate >= today).length;
+            document.getElementById('upcomingCount').innerText = upcoming;
+            document.getElementById('totalTrips').innerText = userBookings.length;
+            
+            // Show recent bookings (last 3)
+            const recentBookings = userBookings.slice(-3).reverse();
+            const bookingsList = document.getElementById('userBookingsList');
+            
+            if (recentBookings.length > 0) {
+                bookingsList.innerHTML = recentBookings.map(booking => `
+                    <div class="booking-item">
+                        <img src="https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg?auto=compress&cs=tinysrgb&w=100" alt="${booking.destination}">
+                        <div>
+                            <h4>${booking.destination}</h4>
+                            <p>${booking.travelDate} · ${booking.peopleCount} traveler(s)</p>
+                        </div>
+                        <span class="status ${booking.status}">${booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}</span>
+                    </div>
+                `).join('');
+            } else {
+                bookingsList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-calendar-alt"></i>
+                        <p>No bookings yet. Book your first trip!</p>
+                        <button onclick="showBookNew()" class="btn-book-now" style="margin-top: 1rem;">Book Now →</button>
+                    </div>
+                `;
+            }
+            
+            // Update all bookings view
+            const allBookingsList = document.getElementById('allBookingsList');
+            if (userBookings.length > 0) {
+                allBookingsList.innerHTML = userBookings.map(booking => `
+                    <div class="booking-item">
+                        <img src="https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg?auto=compress&cs=tinysrgb&w=100" alt="${booking.destination}">
+                        <div>
+                            <h4>${booking.destination}</h4>
+                            <p>${booking.travelDate} · ${booking.peopleCount} traveler(s) · Booked on ${new Date(booking.bookedAt).toLocaleDateString()}</p>
+                        </div>
+                        <span class="status ${booking.status}">${booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}</span>
+                    </div>
+                `).join('');
+            } else {
+                allBookingsList.innerHTML = '<div class="empty-state"><i class="fas fa-calendar-alt"></i><p>No bookings found.</p></div>';
+            }
+        }
+        
+        // Handle booking from within dashboard
+        const dashboardBookingForm = document.getElementById('dashboardBookingForm');
+        const dashboardMsgDiv = document.getElementById('dashboardBookingMessage');
+        
+        if (dashboardBookingForm) {
+            dashboardBookingForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const destination = document.getElementById('bookingDestination').value;
+                const travelDate = document.getElementById('bookingTravelDate').value;
+                const peopleCount = document.getElementById('bookingPeopleCount').value;
+                
+                if (!travelDate) {
+                    alert('Please select a travel date');
+                    return;
+                }
+                
+                const newBooking = {
+                    id: Date.now(),
+                    name: userName,
+                    email: userEmail,
+                    destination: destination,
+                    travelDate: travelDate,
+                    peopleCount: parseInt(peopleCount),
+                    status: 'pending',
+                    bookedAt: new Date().toISOString(),
+                    amount: parseInt(destination.match(/\$(\d+)/)?.[1] || 899) * parseInt(peopleCount)
+                };
+                
+                const existingBookings = loadUserBookings();
+                existingBookings.push(newBooking);
+                saveUserBookings(existingBookings);
+                
+                console.log('New booking created:', newBooking);
+                
+                dashboardMsgDiv.innerHTML = `
+                    <div style="background: #d1fae5; color: #065f46; padding: 1rem; border-radius: 16px; text-align: center; margin-top: 1rem;">
+                        ✅ Booking confirmed! You will receive a confirmation email at ${userEmail}
+                    </div>
+                `;
+                
+                dashboardBookingForm.reset();
+                document.getElementById('bookingTravelDate').value = '';
+                
+                setTimeout(() => {
+                    dashboardMsgDiv.innerHTML = '';
+                    showDashboard();
+                    updateDashboard();
+                }, 2000);
+            });
+        }
+        
+        // Navigation functions
+        function showDashboard() {
+            document.getElementById('dashboardView').style.display = 'block';
+            document.getElementById('myBookingsView').style.display = 'none';
+            document.getElementById('bookNewView').style.display = 'none';
+            document.getElementById('profileView').style.display = 'none';
+        }
+        
+        function showMyBookings() {
+            document.getElementById('dashboardView').style.display = 'none';
+            document.getElementById('myBookingsView').style.display = 'block';
+            document.getElementById('bookNewView').style.display = 'none';
+            document.getElementById('profileView').style.display = 'none';
+            updateDashboard();
+        }
+        
+        function showBookNew() {
+            document.getElementById('dashboardView').style.display = 'none';
+            document.getElementById('myBookingsView').style.display = 'none';
+            document.getElementById('bookNewView').style.display = 'block';
+            document.getElementById('profileView').style.display = 'none';
+            // Set min date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('bookingTravelDate').min = today;
+        }
+        
+        function showProfile() {
+            document.getElementById('dashboardView').style.display = 'none';
+            document.getElementById('myBookingsView').style.display = 'none';
+            document.getElementById('bookNewView').style.display = 'none';
+            document.getElementById('profileView').style.display = 'block';
+        }
+        
+        window.showMyBookings = showMyBookings;
+        window.showBookNew = showBookNew;
+        
+        // Sidebar navigation
+        document.getElementById('dashboardTab').addEventListener('click', showDashboard);
+        document.getElementById('myBookingsTab').addEventListener('click', showMyBookings);
+        document.getElementById('bookNewTab').addEventListener('click', showBookNew);
+        document.getElementById('profileTab').addEventListener('click', showProfile);
+        
+        // Recommended packages
+        const packagesGrid = document.getElementById('packagesGrid');
+        if (packagesGrid) {
+            packagesGrid.innerHTML = `
+                <div class="package-card" onclick="quickBook('Bali, Indonesia')">
+                    <h4>🏝️ Bali Escape</h4>
+                    <p>7 days · $899</p>
+                    <button>Book Now</button>
+                </div>
+                <div class="package-card" onclick="quickBook('Paris, France')">
+                    <h4>🗼 Paris Romance</h4>
+                    <p>5 days · $1299</p>
+                    <button>Book Now</button>
+                </div>
+                <div class="package-card" onclick="quickBook('Maldives')">
+                    <h4>🌊 Maldives Luxury</h4>
+                    <p>6 days · $1999</p>
+                    <button>Book Now</button>
+                </div>
+                <div class="package-card" onclick="quickBook('Tokyo, Japan')">
+                    <h4>🗾 Tokyo Adventure</h4>
+                    <p>6 days · $1499</p>
+                    <button>Book Now</button>
+                </div>
+            `;
+        }
+        
+        window.quickBook = function(destination) {
+            const select = document.getElementById('bookingDestination');
+            if (select) {
+                for (let i = 0; i < select.options.length; i++) {
+                    if (select.options[i].value.includes(destination.split(',')[0])) {
+                        select.selectedIndex = i;
+                        break;
+                    }
+                }
+            }
+            showBookNew();
+        };
+        
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = '../login.html';
+        });
+        
+        // Initialize
+        updateDashboard();
+        
+        // Set default date min
+        const today = new Date().toISOString().split('T')[0];
+        if (document.getElementById('bookingTravelDate')) {
+            document.getElementById('bookingTravelDate').min = today;
+        }
+    </script>
+</body>
+</html>
